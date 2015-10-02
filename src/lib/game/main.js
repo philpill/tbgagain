@@ -10,8 +10,7 @@ ig.module(
     'game.entities.player',
     'impact.game',
     'impact.font',
-    'impact.input',
-    'plusplus.debug.debug'
+    'impact.input'
 )
 .defines(function(){
 

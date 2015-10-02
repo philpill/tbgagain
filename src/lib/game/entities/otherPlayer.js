@@ -18,6 +18,10 @@ ig.module(
 
         collides: ig.EntityExtended.COLLIDES.PASSIVE,
 
+        // controllable : false,
+
+        performance : 'dynamic',
+
         setAnimations : function () {
 
             this.animationManager = new ig.animationManager();
