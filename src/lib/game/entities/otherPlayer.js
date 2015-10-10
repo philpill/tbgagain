@@ -42,6 +42,12 @@ ig.module(
         queuePositionUpdate : function (update) {
 
             // get connection latency here and apply to timeout
+
+            var latency = ig.connectionManager.latency;
+
+            console.log(latency);
+
+
             setTimeout((function () {
 
                 this.processUpdate(update);

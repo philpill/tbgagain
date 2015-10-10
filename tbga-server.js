@@ -131,6 +131,26 @@ function removePlayer (id) {
     delete players[id];
 }
 
+function getLatency (oldValue, newValue) {
+
+    var latency = oldValue;
+
+    if (!newValue) {
+
+        latency = null;
+
+    } else if (newValue > oldValue) {
+
+        latency = newValue;
+
+    } else if (newValue < oldValue) {
+
+        latency = Math.round((newValue + oldValue)/2);
+    }
+
+    return latency;
+}
+
 var players = {};
 
 var io;
@@ -144,6 +164,28 @@ function init (socketio) {
         console.log('a user connected');
 
         var playerNumber;
+
+        var start;
+
+        function sendPing () {
+
+            start = Date.now();
+
+            socket.emit('ping', socket.latency);
+
+            setTimeout(sendPing, 1000);
+        }
+
+        socket.on('pong', function () {
+
+            var latency = Date.now() - start;
+
+            // console.log('ping ' + latency + 'ms');
+
+            socket.latency = socket.latency ? getLatency(socket.latency, latency) : latency;
+        });
+
+        sendPing();
 
         function onDisconnect () {
 
@@ -163,11 +205,12 @@ function init (socketio) {
             // console.log(data);
 
             // broadcast that out to everyone else
+
             socket.broadcast.emit('playerMove', {
                 id : socket.id,
                 pos : data.pos,
                 vel : data.vel,
-                time : data.time,
+                time : data.time
             });
 
             // clear timeout
