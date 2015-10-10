@@ -71,7 +71,8 @@ ig.module(
                 ig.game.socket.emit('playerMove', {
                     playerId : ig.game.playerId,
                     pos : this.pos,
-                    vel : this.vel
+                    vel : this.vel,
+                    time : Date.now()
                 });
             }
 

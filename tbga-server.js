@@ -38,7 +38,7 @@ function getOtherPlayers (id) {
 
 function getPlayersArray () {
 
-    console.log('getPlayersArray()');
+    // console.log('getPlayersArray()');
 
     var playersArray = [];
 
@@ -49,7 +49,7 @@ function getPlayersArray () {
         playersArray.push(players[id]);
     });
 
-    console.log(playersArray);
+    // console.log(playersArray);
 
     return playersArray;
 }
@@ -139,13 +139,13 @@ function init (socketio) {
 
     io = socketio;
 
-    socketio.sockets.on('connection', function(socket){
+    socketio.sockets.on('connection', function (socket) {
 
         console.log('a user connected');
 
         var playerNumber;
 
-        socket.on('disconnect', function() {
+        function onDisconnect () {
 
             console.log('user disconnected');
 
@@ -154,36 +154,20 @@ function init (socketio) {
             socket.broadcast.emit('playerDisconnect', {
                 id : socket.id
             });
-        });
+        }
 
-        socket.on('playerMove', function (data) {
+        function onPlayerMove (data) {
 
             // console.log('playerMove');
 
             // console.log(data);
 
-            var player = players[socket.id];
-
-            player.pos.x = data.pos.x;
-
-            player.pos.y = data.pos.y;
-
-            player.vel.x = data.vel.x;
-
-            player.vel.y = data.vel.y;
-
             // broadcast that out to everyone else
-
             socket.broadcast.emit('playerMove', {
-                id : player.id,
-                pos : {
-                    x : player.pos.x,
-                    y : player.pos.y
-                },
-                vel : {
-                    x : player.vel.x,
-                    y : player.vel.y
-                }
+                id : socket.id,
+                pos : data.pos,
+                vel : data.vel,
+                time : data.time,
             });
 
             // clear timeout
@@ -200,9 +184,10 @@ function init (socketio) {
                 disconnectPlayer(socket.id);
 
             }, config.KILL_TIMEOUT);
-        });
+        }
 
-        socket.on('gameStart', function(callback) {
+
+        function onGameStart (callback) {
 
             console.log('gameStart');
 
@@ -233,10 +218,10 @@ function init (socketio) {
 
                 playerNumber : playerNumber
             });
+        }
 
-        });
 
-        socket.on('playerStart', function() {
+        function onPlayerStart () {
 
             console.log('playerStart');
 
@@ -256,9 +241,13 @@ function init (socketio) {
 
                 console.log('max players - no free slots');
             }
-        });
-    });
+        }
 
+        socket.on('disconnect', onDisconnect);
+        socket.on('playerMove', onPlayerMove);
+        socket.on('gameStart', onGameStart);
+        socket.on('playerStart', onPlayerStart);
+    });
 }
 
 module.exports = {

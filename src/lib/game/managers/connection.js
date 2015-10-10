@@ -89,6 +89,8 @@ ig.module(
 
         init : function () {
 
+            console.log('connection.init()');
+
             this.game = ig.game;
 
             var socket = io();
@@ -100,7 +102,16 @@ ig.module(
             socket.on('newPlayer', this.onNewPlayer.bind(this));
             socket.on('connect_error', this.onConnectError.bind(this));
 
-            return socket;
+            socket.on('ping', function (latency) {
+
+                console.log('ping ', latency);
+
+                this.latency = latency;
+
+                socket.emit('pong');
+            });
+
+            this.socket = socket;
         }
     });
 });

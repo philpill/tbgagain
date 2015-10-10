@@ -46,11 +46,10 @@ ig.module(
                 }
             }
 
-
             // Add your own, additional update code here
             if (ig.input.pressed('start')) {
 
-                this.socket = this.connectionManager.init();
+                // this.socket = this.connectionManager.init();
 
                 this.levelManager.next();
 
@@ -66,7 +65,6 @@ ig.module(
                     this.spawnPlayer(data);
 
                 }).bind(this));
-
             }
         },
 
@@ -90,7 +88,6 @@ ig.module(
 
                     game.getPlayer().speak('wtf?');
 
-
                 } else {
 
                     console.error('cannot find spawn point on level');
@@ -110,7 +107,7 @@ ig.module(
 
             if (player) {
 
-                player.animate(data);
+                player.queuePositionUpdate(data);
             }
         },
 
@@ -231,6 +228,7 @@ ig.module(
         start : function () {
 
             this.connectionManager = new ig.connectionManager();
+            this.socket = this.connectionManager.socket;
             this.levelManager = new ig.levelManager();
             this.uiManager = new ig.uiManager();
             this.hasStarted = false;

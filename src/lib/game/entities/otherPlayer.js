@@ -18,10 +18,6 @@ ig.module(
 
         collides: ig.EntityExtended.COLLIDES.PASSIVE,
 
-        // controllable : false,
-
-        performance : 'dynamic',
-
         setAnimations : function () {
 
             this.animationManager = new ig.animationManager();
@@ -36,11 +32,21 @@ ig.module(
             this.animationManager = null;
         },
 
-        animate : function (data) {
+        processUpdate : function (data) {
 
             this.vel = data.vel;
 
             this.pos = data.pos;
+        },
+
+        queuePositionUpdate : function (update) {
+
+            // get connection latency here and apply to timeout
+            setTimeout((function () {
+
+                this.processUpdate(update);
+
+            }).bind(this), 100);
         },
 
         init : function (x, y, settings) {
